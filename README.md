@@ -13,7 +13,9 @@ A Python package that provides the generated `Hermes` and `Antlr4` WDL parsers f
 
 From the CLI:
 
-`pip install wdlparse`
+```
+pip install wdlparse
+```
 
 ## Usage
 

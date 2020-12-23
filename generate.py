@@ -39,7 +39,7 @@ def generate_dev():
     Generate parsers for the development version.
     """
     if not check_java():
-        logger.warning("Failed to generate parsers for development.  Java is not installed.")
+        logger.warning('Failed to generate parsers for development.  Java is not installed.')
         return False
 
     if not check_antlr():
@@ -58,7 +58,7 @@ def generate_v1():
     Generate parsers for the 1.0 version.
     """
     if not check_java():
-        logger.warning("Failed to generate parsers for development.  Java is not installed.")
+        logger.warning('Failed to generate parsers for 1.0.  Java is not installed.')
         return False
 
     if not check_antlr():
@@ -77,7 +77,8 @@ def generate_draft2():
     Generate parsers for the draft-2 version.
     """
     if not check_hermes():
-        logger.warning("Failed to generate parsers for development.  Java is not installed.")
+        logger.warning('Failed to generate parsers for draft-2.  Hermes is not installed.')
+        logger.warning('Install hermes-parser via `pip install hermes-parser`.')
         return False
 
     # download grammar if it doesn't exist already

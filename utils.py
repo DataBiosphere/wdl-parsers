@@ -51,9 +51,8 @@ def check_hermes() -> bool:
 
 def download_from_url(url: str, out_filepath: str):
     """
-    Download a file from the Internet.
-
-    Exception will be raised if anything goes wrong.
+    Download a file from the Internet. Exception will be raised if anything
+    goes wrong.
 
     :param url: url to fetch from.
     :param out_filepath: file name relative to cwd.
