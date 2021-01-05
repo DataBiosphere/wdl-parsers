@@ -31,16 +31,12 @@ import wdlparse.dev
 from wdlparse.draft2 import wdl_parser
 
 # 1.0 antlr4 parser
-from wdlparse.v1 import (
-    WdlV1Lexer,
-    WdlV1Parser
-)
+from wdlparse.v1.WdlV1Lexer import WdlV1Lexer
+from wdlparse.v1.WdlV1Parser import WdlV1Parser
 
 # development antlr4 parser
-from wdlparse.dev import (
-    WdlLexer,
-    WdlParser
-)
+from wdlparse.dev.WdlLexer import WdlLexer
+from wdlparse.dev.WdlParser import WdlParser
 
 # parse WDL files with these parsers
 # ...

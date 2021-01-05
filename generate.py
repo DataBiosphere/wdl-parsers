@@ -92,11 +92,11 @@ def main(args=None):
     parser.add_argument('-v', '--version',
                         nargs='*',
                         choices=('all', 'draft-2', '1.0', 'development', ),
-                        default='all',
+                        default=['all'],
                         help='version(s) to generate.')
 
     args = parser.parse_args(args)
-    versions = [args.version] if isinstance(args.version, str) else set(args.version)
+    versions = set(args.version)
 
     if 'all' in versions:
         logger.info(f'Generating parsers for all versions.')
