@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Regents of the University of California
+# Copyright (C) 2021-2022 Regents of the University of California
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 # limitations under the License.
 import argparse
 import logging
+import os
 import sys
 
 from utils import (
@@ -34,7 +35,7 @@ logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 logger.setLevel(logging.DEBUG)
 
 
-def generate_dev():
+def generate_development(output_base_url: str, output_dir: str = "development"):
     """
     Generate parsers for the development version.
     """
@@ -49,11 +50,12 @@ def generate_dev():
     download_grammar_from_github('versions/development/parsers/antlr4/WdlLexer.g4', 'WdlLexer.g4')
     download_grammar_from_github('versions/development/parsers/antlr4/WdlParser.g4', 'WdlParser.g4')
 
-    run_antlr(['-o', 'wdlparse/dev', 'WdlLexer.g4'])
-    run_antlr(['-listener', '-visitor', '-o', 'wdlparse/dev', 'WdlParser.g4'])
+    output = os.path.join(output_base_url, output_dir)
+    run_antlr(['-o', output, 'WdlLexer.g4'])
+    run_antlr(['-listener', '-visitor', '-o', output, 'WdlParser.g4'])
 
 
-def generate_v1():
+def generate_v1_0(output_base_url: str, output_dir: str = "v1_0"):
     """
     Generate parsers for the 1.0 version.
     """
@@ -68,11 +70,32 @@ def generate_v1():
     download_grammar_from_github('versions/1.0/parsers/antlr4/WdlV1Lexer.g4', 'WdlV1Lexer.g4')
     download_grammar_from_github('versions/1.0/parsers/antlr4/WdlV1Parser.g4', 'WdlV1Parser.g4')
 
-    run_antlr(['-o', 'wdlparse/v1', 'WdlV1Lexer.g4'])
-    run_antlr(['-listener', '-visitor', '-o', 'wdlparse/v1', 'WdlV1Parser.g4'])
+    output = os.path.join(output_base_url, output_dir)
+    run_antlr(['-o', output, 'WdlV1Lexer.g4'])
+    run_antlr(['-listener', '-visitor', '-o', output, 'WdlV1Parser.g4'])
 
 
-def generate_draft2():
+def generate_v1_1(output_base_url: str, output_dir: str = "v1_1"):
+    """
+    Generate parsers for the 1.1 version.
+    """
+    if not check_java():
+        logger.warning('Failed to generate parsers for 1.1.  Java is not installed.')
+        return False
+
+    if not check_antlr():
+        download_antlr()
+
+    # download grammar if it doesn't exist already
+    download_grammar_from_github('versions/1.1/parsers/antlr4/WdlV1_1Lexer.g4', 'WdlV1_1Lexer.g4')
+    download_grammar_from_github('versions/1.1/parsers/antlr4/WdlV1_1Parser.g4', 'WdlV1_1Parser.g4')
+
+    output = os.path.join(output_base_url, output_dir)
+    run_antlr(['-o', output, 'WdlV1_1Lexer.g4'])
+    run_antlr(['-listener', '-visitor', '-o', output, 'WdlV1_1Parser.g4'])
+
+
+def generate_draft_2(output_base_url: str, output_dir: str = "draft_2"):
     """
     Generate parsers for the draft-2 version.
     """
@@ -84,36 +107,42 @@ def generate_draft2():
     # download grammar if it doesn't exist already
     download_grammar_from_github('versions/draft-2/parsers/grammar.hgr', 'grammar.hgr')
 
-    run_hermes('grammar.hgr', 'wdlparse/draft2')
+    output = os.path.join(output_base_url, output_dir)
+    run_hermes('grammar.hgr', output)
 
 
 def main(args=None):
-    parser = argparse.ArgumentParser(description='WDL parsers generation script.')
-    parser.add_argument('-v', '--version',
-                        nargs='*',
-                        choices=('all', 'draft-2', '1.0', 'development', ),
-                        default=['all'],
-                        help='version(s) to generate.')
+    parser = argparse.ArgumentParser(description="WDL parsers generation script.")
+    parser.add_argument("--versions",
+                        nargs="*",
+                        choices=("all", "draft-2", "1.0", "1.1", "development", ),
+                        default=["all"],
+                        help="version(s) to generate.")
 
     args = parser.parse_args(args)
-    versions = set(args.version)
+    versions = set(args.versions)
 
-    if 'all' in versions:
-        logger.info(f'Generating parsers for all versions.')
-        generate_draft2()
-        generate_v1()
-        generate_dev()
+    base_url = "src/wdl_parsers"
+
+    if "all" in versions:
+        logger.info(f"Generating parsers for all versions.")
+        generate_draft_2(base_url)
+        generate_v1_0(base_url)
+        generate_v1_1(base_url)
+        generate_development(base_url)
         return
 
     for v in versions:
-        logger.info(f'Generating parsers for: {v}.')
-        if v == 'draft-2':
-            generate_draft2()
-        elif v == '1.0':
-            generate_v1()
-        elif v == 'development':
-            generate_dev()
+        logger.info(f"Generating parsers for: {v}.")
+        if v == "draft-2":
+            generate_draft_2(base_url)
+        elif v == "1.0":
+            generate_v1_0(base_url)
+        elif v == "1.1":
+            generate_v1_1(base_url)
+        elif v == "development":
+            generate_development(base_url)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

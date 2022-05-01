@@ -1,7 +1,7 @@
 all: generate clean-extras
 
 generate:
-	python generate.py -v all
+	python scripts/generate.py --versions all
 
 # clean everything except the generated files.
 clean-extras:
@@ -11,4 +11,4 @@ clean-extras:
 
 # clean everything including the generated files
 clean: clean-extras
-	cd wdlparse && find . -type f \( -name 'Wdl*.py' -or -name 'wdl_parser.py' \) -delete
+	cd src/wdl_parsers && find . -type f \( -name 'Wdl*.py' -or -name 'wdl_parser.py' \) -delete

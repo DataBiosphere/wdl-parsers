@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Regents of the University of California
+# Copyright (C) 2021-2022 Regents of the University of California
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ import os
 import shutil
 import subprocess
 import sys
+from typing import Optional
 from urllib.request import urlopen
 
 """
@@ -68,7 +69,7 @@ def download_antlr():
     download_from_url(f'https://www.antlr.org/download/{ANTLR_JAR}', ANTLR_JAR)
 
 
-def download_grammar_from_github(filename: str, out_filepath: str):
+def download_grammar_from_github(filename: str, out_filepath: Optional[str] = None):
     """
     Download a raw grammar file directly from Github. This ensures the most up-to-date
     file will be generated.
@@ -77,6 +78,9 @@ def download_grammar_from_github(filename: str, out_filepath: str):
                      https://github.com/openwdl/wdl
     :param out_filepath: file name relative to cwd.
     """
+    if not out_filepath:
+        out_filepath = os.path.basename(filename)
+
     url = os.path.join('https://raw.githubusercontent.com/openwdl/wdl/main/', filename)
     download_from_url(url, out_filepath)
 
