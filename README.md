@@ -1,7 +1,5 @@
 # wdl-parsers
 
-NOTE: this is a fork of the [`wdl-parsers`](https://github.com/DataBiosphere/wdl-parsers) package.
-
 
 A Python package that provides the generated `Hermes` and `Antlr4` WDL parsers for Python.
 
