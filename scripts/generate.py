@@ -15,6 +15,7 @@ import argparse
 import logging
 import os
 import sys
+from datetime import datetime
 
 from utils import (
     check_java,
@@ -23,7 +24,7 @@ from utils import (
     run_antlr,
     run_hermes,
     download_antlr,
-    download_grammar_from_github,
+    download_grammar_from_github, fetch_latest_grammar_commit,
 )
 
 """
@@ -111,6 +112,15 @@ def generate_draft_2(output_base_url: str, output_dir: str = "draft_2"):
     run_hermes('grammar.hgr', output)
 
 
+def write_history(commit_hash: str, version: str):
+    """
+    Update the HISTORY file to keep track of the grammar versions we used to
+    generate the parsers,
+    """
+    with open("HISTORY", "a") as f:
+        f.write(f"\n{datetime.now().isoformat()}\topenwdl/wdl@{commit_hash}\t{version}\n")
+
+
 def main(args=None):
     parser = argparse.ArgumentParser(description="WDL parsers generation script.")
     parser.add_argument("--versions",
@@ -123,6 +133,10 @@ def main(args=None):
     versions = set(args.versions)
 
     base_url = "src/wdl_parsers"
+
+    # keep track of grammar versions
+    commit_hash = fetch_latest_grammar_commit()
+    write_history(commit_hash, str(list(versions)))
 
     if "all" in versions:
         logger.info(f"Generating parsers for all versions.")

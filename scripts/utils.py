@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
 import logging
 import os
 import shutil
@@ -18,6 +19,8 @@ import subprocess
 import sys
 from typing import Optional
 from urllib.request import urlopen
+
+import requests
 
 """
 Utility functions for generating the WDL parsers.
@@ -67,6 +70,17 @@ def download_from_url(url: str, out_filepath: str):
 def download_antlr():
     """ Download the executable Antlr4 jar to the cwd."""
     download_from_url(f'https://www.antlr.org/download/{ANTLR_JAR}', ANTLR_JAR)
+
+
+def fetch_latest_grammar_commit() -> str:
+    """
+    Fetch the latest commit of openwdl/wdl from the GitHub API.
+    """
+    response = requests.get("https://api.github.com/repos/openwdl/wdl/commits/main", json=True)
+    if not response.ok:
+        raise RuntimeError("Cannot get commit SHA. Are you connected to the Internet?")
+
+    return json.loads(response.content).get("sha", "UNKNOWN")
 
 
 def download_grammar_from_github(filename: str, out_filepath: Optional[str] = None):
